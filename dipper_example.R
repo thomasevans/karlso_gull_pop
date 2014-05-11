@@ -113,5 +113,13 @@ str(dipper.ddl)
 # already processed data (output from 'make.design.data') 
 dipper.mark.ex.1 <- mark(dipper.process, dipper.ddl)
 
-
+# see data structure
 PIMS(dipper.mark.ex.1, "Phi", simplified = FALSE)
+# Each factor combination (year sex combination) gets a paramater number
+# Here 1 - 21 for females, and 22 - 42 for males
+
+# Similar, see design stucture for Phi (survival).
+# Same paramater numbers as above
+dipper.ddl$Phi
+
+

@@ -123,3 +123,71 @@ PIMS(dipper.mark.ex.1, "Phi", simplified = FALSE)
 dipper.ddl$Phi
 
 
+
+# Clean-up our workspace
+# View what's in the workspace
+ls()
+# Remove everything (we'll reload the dipper dataset)
+rm(list = ls())
+# Remove associated analysis files produced by Mark
+cleanup(ask = FALSE)
+
+# Reload the dipper data
+data(dipper)
+
+
+
+# Paramater specifications
+# When specifying a more complicated model you can specify different paramaters,
+# for example may have sepperate paramater values for males and females
+# Here we specify several possible paramaters to be used with the example
+# dipper data set.
+# paramaters shoudl be specified using the notation below, i.e.
+# paramater DOT grouping/ variable
+Phi.dot <- list(formula = ~1)
+p.dot <- list(formula = ~1)
+
+Phi.time <- list(formula = ~ time)
+Phi.sex <- list(formula = ~sex)
+Phi.sexplusage <- list(formula= ~sex + age)
+p.time <- list(formula = ~time)
+p.Time <- list(formula = ~Time)
+p.Timeplussex <- list(formula = ~Time + sex)
+
+
+# First re-process the dipper data (as done previously)
+dipper.process <- process.data(dipper,
+                               model = "CJS",
+                               begin.time = 1980,
+                               groups = "sex")
+
+# Run make.design.data
+dipper.ddl <- make.design.data(dipper.process)
+
+
+# Now specify new models using the paramater specifications given above
+# Base model (all paramaters are the same)
+dipper.phi.dot.p.dot <- mark(dipper.process, dipper.ddl,
+                             model.parameters = list(Phi = Phi.dot,
+                                                     p = p.dot))
+# Now we have time, so different paramater estimates for each year, but not sex
+dipper.phi.time.p.dot <- mark(dipper.process, dipper.ddl,
+                              model.parameters = list(Phi = Phi.time,
+                                                      p = p.dot))
+
+# Now with sex and age
+dipper.phi.sex.p.Timeplussex <- mark(dipper.process,
+                                     dipper.ddl,
+                                     model.parameters = list(
+                                       Phi = Phi.sex, p = p.Timeplussex))
+# This model allowed both phi (survival) and p (re-sighting probability),
+# to vary for sex. Additionally re-sighting probabilty can vary by year
+# survival is fixed within sex (the model does not allow for a year effect)
+
+
+# view structure of 'mark' object created for above model
+names(dipper.phi.sex.p.Timeplussex)
+
+# E.g. 'output' is a link to the Mark output file
+dipper.phi.sex.p.Timeplussex$output
+
